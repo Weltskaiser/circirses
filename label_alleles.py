@@ -116,19 +116,21 @@ for anno_df in all_anno_df:
     for allele in range(1, 3):
         channel = anno_df["channel"].iloc[0]
         A1_raw = np.array(anno_df["A{}_weight_raw".format(allele)].to_list())
+        weights_raw = np.unique(A1_raw)
+        A1_w_raw = []
+        for w in weights_raw:
+            A1_w_raw.append(A1_raw[np.where(A1_raw == w)])
         A1_grouped = np.array(anno_df["A{}_weight".format(allele)].to_list())
-        weights = np.unique(A1_grouped)
-        A1_w = []
-        for w in weights:
-            A1_w.append(A1_grouped[np.where(A1_grouped == w)])
-        # print(channele, allele, A1_w)
+        weights_grouped = np.unique(A1_grouped)
+        A1_w_grouped = []
+        for w in weights_grouped:
+            A1_w_grouped.append(A1_grouped[np.where(A1_grouped == w)])
         fig, ax = plt.subplots(figsize=(12, 6))
-        plt.scatter(A1_raw, A1_raw, label='X ({} obs)'.format(len(A1_raw)))
-        for i in range(len(A1_w)):
-            plt.scatter(A1_w[i], A1_w[i] + 5, label='{}_al_{}.{} ({} obs)'.format(channel, allele, str(i), len(A1_w[i])))
-        #plt.scatter(A1_l[0], A1_l[0] + 5, label='cluster_'+str(0))
-        # leg = plt.legend(bbox_to_anchor=(1.3, 1))
-        plt.legend(prop={'size': 6})
+        for i in range(len(A1_w_raw)):
+            plt.scatter(A1_w_raw[i], A1_w_raw[i], label='raw ({} obs)'.format(len(A1_w_raw[i])))
+        for i in range(len(A1_w_grouped)):
+            plt.scatter(A1_w_grouped[i], A1_w_grouped[i] + 5, label='{}_al_{}.{} ({} obs)'.format(channel, allele, str(i), len(A1_w_grouped[i])))
+        plt.legend(prop={'size': 6}, ncol=2)
         plt.title(channel+"_allele_"+str(allele))
         plt.show()
 sys.exit()
